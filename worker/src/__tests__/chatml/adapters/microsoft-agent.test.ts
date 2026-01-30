@@ -58,6 +58,55 @@ describe("Microsoft Agent Framework Adapter", () => {
       expect(microsoftAgentAdapter.detect({ data: input })).toBe(true);
     });
 
+    it("should detect Microsoft Extension AI format with role and parts types", () => {
+      const input = [
+        {
+          "role": "system",
+          "parts": [
+            {
+              "type": "text",
+              "content": "You are a helpful weather assistant"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "parts": [
+            {
+              "type": "text",
+              "content": "What's the weather in Paris?"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "parts": [
+            {
+              "type": "tool_call",
+              "id": "call_1",
+              "name": "getWeather",
+              "arguments": {
+                "city": "Paris"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "parts": [
+            {
+              "type": "tool_call_response",
+              "id": "call_1",
+              "response": {
+                "temperatureCelsius": 20
+              }
+            }
+          ]
+        }
+      ];
+      expect(microsoftAgentAdapter.detect({ data: input })).toBe(true);
+    });
+
     it("should not detect OpenAI format without parts", () => {
       expect(
         microsoftAgentAdapter.detect({

@@ -10,19 +10,20 @@ import { z } from "zod/v4";
 /**
  * Detection schemas for Microsoft Agent Framework format
  *
- * Microsoft Agent Framework uses a ChatML-like format with parts arrays:
- * - Messages: {role: "user|assistant|tool", parts: [{type, ...}]}
+ * Microsoft Agent Framework / Microsoft.Extensions.AI uses a ChatML-like format with parts arrays:
+ * - Messages: {role: "user|assistant|tool|system", parts: [{type, ...}]}
  * - Tool calls: {type: "tool_call", id: [...], name, arguments}
  * - Tool responses: {type: "tool_call_response", id: [...], response}
  * - Text: {type: "text", content}
+ * - Plus a few other type parts for data/reasoning/error/uri/...
  */
 
 // Microsoft Agent message with parts array
 const MicrosoftAgentMessageSchema = z.looseObject({
-  role: z.enum(["user", "assistant", "tool"]),
+  role: z.enum(["user", "assistant", "tool", "system"]),
   parts: z.array(
     z.looseObject({
-      type: z.enum(["text", "tool_call", "tool_call_response"]),
+      type: z.enum(["text", "tool_call", "tool_call_response"]).or(z.string()),
     }),
   ),
 });
